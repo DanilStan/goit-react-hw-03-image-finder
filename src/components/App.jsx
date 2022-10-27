@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Searchbar } from './Searchbar';
 import { ImageGallery } from './ImageGallery';
-// import { Modal } from './Modal/Modal';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
@@ -28,14 +28,16 @@ export class App extends Component {
   };
 
   render() {
-    // const { isOpenModal, currentImage } = this.state;
     return (
       <main>
         <Searchbar onSubmit={this.handleSubmit} />
         <ImageGallery value={this.state.searchValue} onClick={this.openModal} />
-        {/* {isOpenModal && (
-          <Modal onClose={this.toggleModal} currentImage={currentImage} />
-        )} */}
+        {this.state.isOpenModal && (
+          <Modal
+            onClose={this.toggleModal}
+            currentImage={this.state.currentImage}
+          />
+        )}
       </main>
     );
   }
