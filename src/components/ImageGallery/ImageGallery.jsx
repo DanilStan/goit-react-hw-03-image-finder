@@ -1,35 +1,33 @@
 import { Component } from 'react';
 import { Loader } from '../Loader/Loader';
-import { getImage } from 'data/api';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Button } from 'components/Button';
-// import { NotFound } from 'components/NotFound';
+import { getImage } from 'data/api';
 import PropTypes from 'prop-types';
-
 import css from './ImageGallery.module.css';
 
 const Status = {
-  INIT: 'init',
-  LOADING: 'loading',
-  SUCCESS: 'success',
-  ERROR: 'error',
+  init: 'init',
+  loading: 'loading',
+  ok: 'success',
+  error: 'error',
 };
 
 export class ImageGallery extends Component {
   state = {
     page: 1,
     images: [],
-    status: Status.INIT,
+    status: Status.init,
   };
 
   async componentDidMount() {
-    this.setState({ status: Status.LOADING });
+    this.setState({ status: Status.loading });
 
     try {
       const data = await getImage(this.props.value);
-      this.setState({ images: data, status: Status.SUCCESS });
+      this.setState({ images: data, status: Status.ok });
     } catch {
-      this.setState({ status: Status.ERROR });
+      this.setState({ status: Status.error });
     }
   }
 
@@ -55,17 +53,16 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { status, images } = this.state;
-
     return (
       <>
-        {status === Status.ERROR && <p>ERROOOOOOR</p>}
+        {this.state.status === Status.error && <p>Ошибка</p>}
 
-        {(status === Status.LOADING || status === Status.INIT) && <Loader />}
+        {(this.state.status === Status.loading ||
+          this.state.status === Status.init) && <Loader />}
 
-        {status === Status.SUCCESS && (
+        {this.state.status === Status.ok && (
           <ul className={css.ImageGallery}>
-            {images?.map(item => {
+            {this.state.images?.map(item => {
               return (
                 <ImageGalleryItem
                   key={item.webformatURL}
@@ -77,8 +74,9 @@ export class ImageGallery extends Component {
             })}
           </ul>
         )}
-        {/* {images.length === 0 && <NotFound />} */}
-        {images.length >= 12 && <Button onClick={this.handleLoadMore} />}
+        {this.state.images.length >= 12 && (
+          <Button onClick={this.handleLoadMore} />
+        )}
       </>
     );
   }
