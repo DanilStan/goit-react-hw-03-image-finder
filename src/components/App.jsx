@@ -40,3 +40,7 @@ export class App extends Component {
     );
   }
 }
+
+App.prototype = {
+  children: PropTypes.node,
+};
